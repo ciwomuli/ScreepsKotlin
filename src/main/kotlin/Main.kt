@@ -1,5 +1,4 @@
-import starter.gameLoop
-
+import screeps.gameLoop
 /**
  * Entry point
  * is called by screeps
