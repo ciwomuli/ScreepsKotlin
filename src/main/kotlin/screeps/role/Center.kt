@@ -1,23 +1,30 @@
 package screeps.role
 
-import screeps.api.CARRY
-import screeps.api.ERR_NOT_IN_RANGE
-import screeps.api.MOVE
-import screeps.api.WORK
+import screeps.api.*
 import screeps.api.structures.StructureSpawn
 import screeps.creep.collect
 import screeps.state
 
-class Upgrader(name: String) : CreepExtension(name) {
-    override val role: Role = Role.UPGRADER
+class Center(name: String) : CreepExtension(name) {
+    override val role: Role = Role.CENTER
     override fun run() {
         when (creep?.memory?.state) {
             CreepState.COLLECT -> {
                 creep!!.collect()
             }
-            CreepState.WORK -> if (creep!!.upgradeController(creep!!.room.controller!!) == ERR_NOT_IN_RANGE) creep!!.moveTo(
-                creep!!.room.controller!!
-            )
+            CreepState.WORK -> {
+                val target =
+                    creep!!.pos.findClosestByPath(FIND_MY_STRUCTURES, options {
+                        filter = {
+                            (it.structureType == STRUCTURE_EXTENSION || it.structureType == STRUCTURE_SPAWN) && (it as StoreOwner).store.getFreeCapacity() != 0
+                        }
+                    })
+                if (target != null) {
+                    if (creep!!.transfer(target as StoreOwner, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) creep!!.moveTo(
+                        target
+                    )
+                }
+            }
             CreepState.IDLE -> Unit
         }
     }
@@ -31,7 +38,7 @@ class Upgrader(name: String) : CreepExtension(name) {
         }
 
     override fun spawn(spawn: StructureSpawn) {
-       // console.log("try to spawn upgrader")
+        //console.log("try to spawn center")
         spawn.spawnCreep(arrayOf(WORK, MOVE, CARRY, CARRY, CARRY), name)
     }
 }
