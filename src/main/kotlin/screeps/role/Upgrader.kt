@@ -6,6 +6,8 @@ import screeps.api.MOVE
 import screeps.api.WORK
 import screeps.api.structures.StructureSpawn
 import screeps.creep.collect
+import screeps.room.BodyParts
+import screeps.room.chooseBody
 import screeps.state
 
 class Upgrader(name: String) : CreepExtension(name) {
@@ -30,8 +32,16 @@ class Upgrader(name: String) : CreepExtension(name) {
             else -> CreepState.IDLE
         }
 
+    companion object {
+        val bodyList = listOf(
+            BodyParts(arrayOf(WORK, WORK, MOVE, MOVE, MOVE, CARRY, CARRY, CARRY, CARRY), true),
+            BodyParts(arrayOf(WORK, MOVE, CARRY, CARRY, CARRY), true)
+
+        )
+    }
+
     override fun spawn(spawn: StructureSpawn) {
-       // console.log("try to spawn upgrader")
-        spawn.spawnCreep(arrayOf(WORK, MOVE, CARRY, CARRY, CARRY), name)
+        // console.log("try to spawn upgrader")
+        spawn.spawnCreep(chooseBody(Center.bodyList, spawn.room).parts, name)
     }
 }

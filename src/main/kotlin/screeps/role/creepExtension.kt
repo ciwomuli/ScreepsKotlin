@@ -23,9 +23,8 @@ object CreepExtensions {
         "center_W4N9_1" to Center("center_W4N9_1"),
         "upgrader_W4N9_1" to Upgrader("upgrader_W4N9_1"),
         "upgrader_W4N9_2" to Upgrader("upgrader_W4N9_2"),
-        "upgrader_W4N9_3" to Upgrader("upgrader_W4N9_3"),
         "builder_W4N9_1" to Builder("builder_W4N9_1"),
-        "builder_W4N9_1" to Builder("builder_W4N9_1")
+        "builder_W4N9_2" to Builder("builder_W4N9_2")
     )
 
     operator fun invoke(name: String): CreepExtension = creeps[name]!!

@@ -10,6 +10,9 @@ import screeps.starting
 
 fun Creep.collect() {
     if (room.memory.starting) {
+        if (Game.time % 3000 == 0) {
+            memory.collectTarget = ""
+        }
         val source = Game.getObjectById<Source>(memory.collectTarget) ?: room.getFreeSource()
         memory.collectTarget = source.id
         if (harvest(source) == ERR_NOT_IN_RANGE) {

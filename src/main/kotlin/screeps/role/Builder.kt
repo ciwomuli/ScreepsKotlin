@@ -3,6 +3,8 @@ package screeps.role
 import screeps.api.*
 import screeps.api.structures.StructureSpawn
 import screeps.creep.collect
+import screeps.room.BodyParts
+import screeps.room.chooseBody
 import screeps.room.getConstructionSite
 import screeps.state
 import screeps.workTarget
@@ -16,7 +18,8 @@ class Builder(name: String) : CreepExtension(name) {
             }
             CreepState.WORK -> {
                 val target =
-                    Game.getObjectById<ConstructionSite>(creep!!.memory.workTarget) ?: creep!!.room.getConstructionSite()
+                    Game.getObjectById<ConstructionSite>(creep!!.memory.workTarget)
+                        ?: creep!!.room.getConstructionSite()
                 creep!!.memory.workTarget = target?.id ?: ""
                 if (target != null) {
                     if (creep!!.build(target) == ERR_NOT_IN_RANGE) creep!!.moveTo(target)
@@ -34,8 +37,15 @@ class Builder(name: String) : CreepExtension(name) {
             else -> CreepState.IDLE
         }
 
+    companion object {
+        val bodyList = listOf(
+            BodyParts(arrayOf(WORK, WORK, MOVE, MOVE, MOVE, CARRY, CARRY, CARRY, CARRY), true),
+            BodyParts(arrayOf(WORK, MOVE, CARRY, CARRY, CARRY), true)
+        )
+    }
+
     override fun spawn(spawn: StructureSpawn) {
-       // console.log("try to spawn builder")
-        spawn.spawnCreep(arrayOf(WORK, MOVE, CARRY, CARRY, CARRY), name)
+        // console.log("try to spawn builder")
+        spawn.spawnCreep(chooseBody(Center.bodyList, spawn.room).parts, name)
     }
 }

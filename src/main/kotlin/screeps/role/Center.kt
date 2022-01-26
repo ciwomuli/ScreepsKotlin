@@ -3,6 +3,8 @@ package screeps.role
 import screeps.api.*
 import screeps.api.structures.StructureSpawn
 import screeps.creep.collect
+import screeps.room.BodyParts
+import screeps.room.chooseBody
 import screeps.state
 
 class Center(name: String) : CreepExtension(name) {
@@ -16,7 +18,9 @@ class Center(name: String) : CreepExtension(name) {
                 val target =
                     creep!!.pos.findClosestByPath(FIND_MY_STRUCTURES, options {
                         filter = {
-                            (it.structureType == STRUCTURE_EXTENSION || it.structureType == STRUCTURE_SPAWN) && (it as StoreOwner).store.getFreeCapacity() != 0
+                            (it.structureType == STRUCTURE_EXTENSION || it.structureType == STRUCTURE_SPAWN) && (it as StoreOwner).store.getFreeCapacity(
+                                RESOURCE_ENERGY
+                            ) != 0
                         }
                     })
                 if (target != null) {
@@ -37,8 +41,15 @@ class Center(name: String) : CreepExtension(name) {
             else -> CreepState.IDLE
         }
 
+    companion object {
+        val bodyList = listOf(
+            BodyParts(arrayOf(WORK, WORK, MOVE, MOVE, MOVE, CARRY, CARRY, CARRY, CARRY), true),
+            BodyParts(arrayOf(WORK, MOVE, CARRY, CARRY, CARRY), true)
+        )
+    }
+
     override fun spawn(spawn: StructureSpawn) {
         //console.log("try to spawn center")
-        spawn.spawnCreep(arrayOf(WORK, MOVE, CARRY, CARRY, CARRY), name)
+        spawn.spawnCreep(chooseBody(bodyList, spawn.room).parts, name)
     }
 }

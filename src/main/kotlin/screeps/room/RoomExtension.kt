@@ -1,13 +1,18 @@
 package screeps.room
 
 import screeps.api.*
+import screeps.sourceCount
 import screeps.utils.lazyPerTick
+import screeps.utils.mutableRecordOf
 
 object RoomExtensions {
     private val rooms: MutableMap<String, RoomExtension> = mutableMapOf()
     operator fun invoke(name: String): RoomExtension =
         if (rooms[name] != null) rooms[name]!!
-        else rooms.put(name, RoomExtension(name))!!
+        else {
+            rooms[name] = RoomExtension(name)
+            rooms[name]!!
+        }
 
 }
 
@@ -16,6 +21,9 @@ val Room.extension
         RoomExtensions(name)
 
 fun Room.run() {
+    if (Game.time % 3000 == 0) {
+        memory.sourceCount = mutableRecordOf()
+    }
     spawnCreep()
 }
 
