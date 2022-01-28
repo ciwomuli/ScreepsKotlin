@@ -5,5 +5,6 @@ enum class Role {
     UPGRADER,
     BUILDER,
     HARVESTER,
-    CENTER
+    CENTER,
+    TRANSFER
 }

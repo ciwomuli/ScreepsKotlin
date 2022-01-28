@@ -1,8 +1,5 @@
 package screeps.room
 
-import screeps.api.ActiveBodyPartConstant
-import screeps.api.Creep
-import screeps.api.Room
 import screeps.api.*
 import screeps.roomSpawnLevel
 import screeps.starting
@@ -29,7 +26,7 @@ fun calcEnergyForSpawn(parts: Array<BodyPartConstant>): Int {
 
 fun chooseBody(bodyList: List<BodyParts>, room: Room): BodyParts {
     for (bodyParts in bodyList) {
-        if (bodyParts.availableForStart == room.memory.starting && calcEnergyForSpawn(bodyParts.parts) <= room.memory.roomSpawnLevel)
+        if ((bodyParts.availableForStart || !room.memory.starting) && calcEnergyForSpawn(bodyParts.parts) <= room.memory.roomSpawnLevel)
             return bodyParts
     }
     return bodyList.last()
