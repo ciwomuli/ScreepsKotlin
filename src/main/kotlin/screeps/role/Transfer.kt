@@ -3,27 +3,28 @@ package screeps.role
 import screeps.api.*
 import screeps.api.structures.StructureSpawn
 import screeps.inTransferQueue
-import screeps.room.BodyParts
-import screeps.room.chooseBody
-import screeps.room.emptyTransferTask
-import screeps.room.extension
+import screeps.room.*
 import screeps.state
 import screeps.structures
 import screeps.transferTask
 
 class Transfer(name: String) : CreepExtension(name) {
-    fun finishTask() {
+    private fun finishTask() {
         Memory.structures[creep.memory.transferTask.sender]?.inTransferQueue = false
         creep.memory.transferTask = emptyTransferTask
     }
 
     override fun run() {
-        with(creep.memory.transferTask) {
-            when (creep.memory.state) {
-                CreepState.PREPARE -> {
-                    if (creep.memory.transferTask.amount == 0) creep.memory.transferTask =
-                        creep.room.extension.transferTaskQueue.getTask()
-                    if (creep.memory.transferTask.amount == 0) return
+        when (creep.memory.state) {
+            CreepState.PREPARE -> {
+                var tmp: TransferTask = emptyTransferTask
+                if (creep.memory.transferTask.amount == 0) {
+                    tmp = creep.room.extension.transferTaskQueue.getTask()
+                    creep.memory.transferTask =
+                        tmp
+                }
+                if (creep.memory.transferTask.amount == 0) return
+                with(creep.memory.transferTask) {
                     val fromTarget = Game.getObjectById<StoreOwner>(from)
                     val toTarget = Game.getObjectById<StoreOwner>(to)
                     if (fromTarget == null || toTarget == null) {
@@ -42,7 +43,9 @@ class Transfer(name: String) : CreepExtension(name) {
                         }
                     }
                 }
-                CreepState.COLLECT -> {
+            }
+            CreepState.COLLECT -> {
+                with(creep.memory.transferTask) {
                     val target = Game.getObjectById<StoreOwner>(from)
                     if (target == null) {
                         finishTask()
@@ -55,9 +58,11 @@ class Transfer(name: String) : CreepExtension(name) {
                     else if (code == OK) {
                         creep.memory.state = CreepState.WORK
                         target.store[type] = target.store[type]!! - amunt
-                    } else console.log("${creep.name} try to withdraw ${target.id} err code : ${code}")
+                    } else console.log("${creep.name} try to withdraw ${target.id} err code : $code")
                 }
-                CreepState.WORK -> {
+            }
+            CreepState.WORK -> {
+                with(creep.memory.transferTask) {
                     val target = Game.getObjectById<StoreOwner>(to)
                     if (target == null) {
                         finishTask()
@@ -70,22 +75,23 @@ class Transfer(name: String) : CreepExtension(name) {
                     if (code == ERR_NOT_IN_RANGE) creep.moveTo(target)
                     else if (code == OK || amunt == 0) {
                         target.store[type] = target.store[type]!! + amunt
+                        creep.memory.transferTask.amount -= amunt
                         if (creep.memory.transferTask.amount <= 0) {
                             finishTask()
                         }
-                        creep.memory.transferTask.amount -= amunt
                         creep.memory.state = CreepState.PREPARE
-                    } else console.log("${creep.name} try to transfer ${target.id} err code : ${code}")
+                    } else console.log("${creep.name} try to transfer ${target.id} err code : $code")
                 }
-                else -> Unit
             }
+            else -> Unit
         }
+
     }
 
     override val role: Role = Role.TRANSFER
 
     override fun getNextState(): CreepState = when (creep.memory.state) {
-        CreepState.IDLE -> CreepState.COLLECT
+        CreepState.IDLE -> CreepState.PREPARE
         CreepState.COLLECT -> CreepState.COLLECT
         CreepState.WORK -> CreepState.WORK
         CreepState.PREPARE -> CreepState.PREPARE

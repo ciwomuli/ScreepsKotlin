@@ -23,9 +23,7 @@ var CreepMemory.buildingTask: BuildingTask by memory { emptyBuildingTask }
 var CreepMemory.roomName by memory { "  " }
 var RoomMemory.roomSpawnLevel by memory { 300 }
 var RoomMemory.roomSpawnLevelLastTime by memory { 0 }
-var RoomMemory.sourceCount: MutableRecord<String, Int> by memory { mutableRecordOf<String, Int>() }
 var RoomMemory.ticksLowEnergy: Int by memory { 0 }
-var RoomMemory.hasLink by memory { false }
 var RoomMemory.harvesterContainers: Array<String> by memory { arrayOf("") }
 
 external interface StructureMemory : MemoryMarker

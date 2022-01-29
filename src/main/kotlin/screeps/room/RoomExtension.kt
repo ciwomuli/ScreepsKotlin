@@ -5,7 +5,6 @@ import screeps.api.structures.StructureContainer
 import screeps.api.structures.StructureTower
 import screeps.harvesterContainers
 import screeps.utils.lazyPerTick
-import screeps.utils.memory.memory
 
 object RoomExtensions {
     private val rooms: MutableMap<String, RoomExtension> = mutableMapOf()
@@ -32,12 +31,12 @@ class RoomExtension(roomName: String) {
         room.find(FIND_CONSTRUCTION_SITES)
     }
     val towerIds by lazy {
-        room.find(FIND_MY_STRUCTURES, options { filter = { it.structureType == STRUCTURE_TOWER } }).map { it.id!! }
+        room.find(FIND_MY_STRUCTURES, options { filter = { it.structureType == STRUCTURE_TOWER } }).map { it.id }
     }
     val towers: Array<StructureTower> by lazyPerTick {
         val tmp: MutableList<StructureTower> = mutableListOf()
         for (id in towerIds) {
-            val t = Game.getObjectById<StructureTower>(id!!)
+            val t = Game.getObjectById<StructureTower>(id)
             if (t != null) {
                 tmp.add(t)
             }

@@ -13,7 +13,7 @@ import screeps.utils.lazyPerTick
 abstract class CreepExtension(val name: String) {
     abstract val role: Role
     val creep
-            by lazyPerTick { creeps[name]!! }
+            by lazyPerTick { Game.creeps[name]!! }
 
     abstract fun getNextState(): CreepState
     abstract fun run()
@@ -24,15 +24,15 @@ val Creep.extension
     get() = CreepExtensions(name)
 
 object CreepExtensions {
-    val creeps: MutableMap<String, CreepExtension> = mutableMapOf();
-    fun getCreepExtention(role: Enum<Role>, name: String) = when (role) {
+    val creeps: MutableMap<String, CreepExtension> = mutableMapOf()
+    fun getCreepExtension(role: Enum<Role>, name: String) = when (role) {
         Role.UPGRADER -> Upgrader(name)
         Role.BUILDER -> Builder(name)
         Role.CENTER -> Center(name)
         Role.HARVESTER -> Harvester(name)
         Role.TRANSFER -> Transfer(name)
         else -> {
-            console.log("unknown role ${role}")
+            console.log("unknown role $role")
             Center(name)
         }
     }
@@ -49,7 +49,7 @@ object CreepExtensions {
                 js("delete Memory.creeps[name];")
             } else {
               //  console.log("2${name}")
-                creeps[name] = getCreepExtention(memory.role, name)
+                creeps[name] = getCreepExtension(memory.role, name)
             }
         }
     }
@@ -58,7 +58,7 @@ object CreepExtensions {
         js("Memory.creeps[name] = {};")
         Memory.creeps[name]!!.role = role
         Memory.creeps[name]!!.needToSpawn = needToSpawn
-        creeps[name] = getCreepExtention(role, name)
+        creeps[name] = getCreepExtension(role, name)
     }
 
     fun deleteCreep(name: String) {

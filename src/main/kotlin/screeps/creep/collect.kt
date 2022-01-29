@@ -7,7 +7,7 @@ import screeps.starting
 
 fun Creep.collectEnergy() {
     if (room.memory.starting || room.storage == null) {
-        val source = Game.getObjectById<Source>(memory.collectTarget) ?: room.getFreeSource()
+        val source = Game.getObjectById(memory.collectTarget) ?: room.getFreeSource()
         memory.collectTarget = source.id
         if (harvest(source) == ERR_NOT_IN_RANGE) {
             moveTo(source)

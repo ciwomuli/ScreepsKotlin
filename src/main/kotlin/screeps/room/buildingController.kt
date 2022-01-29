@@ -6,7 +6,6 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import screeps.api.*
 import screeps.inBuildingQueue
-import screeps.inTransferQueue
 import screeps.structures
 import screeps.testing
 import screeps.utils.lazyPerTick

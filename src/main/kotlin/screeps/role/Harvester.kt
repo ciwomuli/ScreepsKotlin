@@ -1,10 +1,12 @@
 package screeps.role
 
-import screeps.*
 import screeps.api.*
 import screeps.api.structures.StructureSpawn
+import screeps.collectTarget
 import screeps.room.BodyParts
 import screeps.room.chooseBody
+import screeps.state
+import screeps.workTarget
 
 class Harvester(name: String) : CreepExtension(name) {
     override val role: Role = Role.HARVESTER
