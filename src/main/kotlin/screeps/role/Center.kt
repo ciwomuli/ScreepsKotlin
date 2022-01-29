@@ -26,8 +26,9 @@ class Center(name: String) : CreepExtension(name) {
                     if (creep.transfer(target as StoreOwner, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) creep.moveTo(
                         target
                     )
-                }else{
-                    creep.moveTo(creep.room.storage!!)
+                } else {
+                    if (creep.room.storage != null)
+                        creep.moveTo(creep.room.storage!!)
                 }
             }
             CreepState.IDLE -> Unit
@@ -59,6 +60,6 @@ class Center(name: String) : CreepExtension(name) {
 
     override fun spawn(spawn: StructureSpawn): ScreepsReturnCode {
         // console.log("try to spawn upgrader")
-        return spawn.spawnCreep(chooseBody(bodyList, spawn.room).parts, name)
+        return spawn.spawnCreep(chooseBody(bodyList, spawn.room, spawn.room.energyAvailable).parts, name)
     }
 }

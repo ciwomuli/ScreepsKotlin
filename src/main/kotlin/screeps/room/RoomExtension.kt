@@ -53,4 +53,5 @@ class RoomExtension(roomName: String) {
         tmp.toTypedArray()
     }
     val transferTaskQueue = TransferTaskQueue(room.name)
+    val buildingTaskQueue = BuildingTaskQueue(room.name)
 }

@@ -24,9 +24,9 @@ fun calcEnergyForSpawn(parts: Array<BodyPartConstant>): Int {
     return res
 }
 
-fun chooseBody(bodyList: List<BodyParts>, room: Room): BodyParts {
+fun chooseBody(bodyList: List<BodyParts>, room: Room, limit: Int = room.memory.roomSpawnLevel): BodyParts {
     for (bodyParts in bodyList) {
-        if ((bodyParts.availableForStart || !room.memory.starting) && calcEnergyForSpawn(bodyParts.parts) <= room.memory.roomSpawnLevel)
+        if ((bodyParts.availableForStart || !room.memory.starting) && calcEnergyForSpawn(bodyParts.parts) <= limit)
             return bodyParts
     }
     return bodyList.last()

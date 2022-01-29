@@ -10,4 +10,5 @@ fun Room.run() {
     spawnCreep()
     tower()
     transfer()
+    building()
 }

@@ -3,5 +3,6 @@ package screeps.role
 enum class CreepState {
     IDLE,
     WORK,
-    COLLECT
+    COLLECT,
+    PREPARE
 }

@@ -1,8 +1,14 @@
 package screeps.room
 
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encodeToString
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.Json
 import screeps.api.*
 import screeps.inTransferQueue
@@ -15,15 +21,16 @@ class TransferTask(
     val from: String,
     val to: String,
     val sender: String,
-    val type: ResourceConstant,
+    val type: String,
     var amount: Int
 )
 
-val emptyTransferTask = TransferTask(0, "", "", "", RESOURCE_ENERGY, 0)
+val emptyTransferTask = TransferTask(0, "", "", "", RESOURCE_ENERGY as String, 0)
 
 @Serializable
 class TransferTaskList(val queue: List<TransferTask>)
 
+@Serializable
 var RoomMemory.transferTaskQueue: TransferTaskList?
     get() {
         val internal = this.asDynamic().transferTaskQueue
@@ -65,11 +72,12 @@ class TransferTaskQueue(roomName: String) {
 
 fun Room.transfer() {
     for (container in extension.harvesterContainers) {
+        if (Memory.structures[container.id] == null) js("Memory.structures[container.id] = {};")
         if (Memory.structures[container.id]?.inTransferQueue == false && container.store[RESOURCE_ENERGY] >= 1000) {
             extension.transferTaskQueue.addTask(
                 TransferTask(
                     5, container.id, storage?.id ?: "", container.id,
-                    RESOURCE_ENERGY, 1000
+                    RESOURCE_ENERGY as String, 1000
                 )
             )
             Memory.structures[container.id]?.inTransferQueue = true

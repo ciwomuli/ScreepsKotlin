@@ -18,11 +18,30 @@ class Transfer(name: String) : CreepExtension(name) {
     }
 
     override fun run() {
-        if (creep.memory.transferTask.amount == 0) creep.memory.transferTask =
-            creep.room.extension.transferTaskQueue.getTask()
-        if (creep.memory.transferTask.amount == 0) return
         with(creep.memory.transferTask) {
             when (creep.memory.state) {
+                CreepState.PREPARE -> {
+                    if (creep.memory.transferTask.amount == 0) creep.memory.transferTask =
+                        creep.room.extension.transferTaskQueue.getTask()
+                    if (creep.memory.transferTask.amount == 0) return
+                    val fromTarget = Game.getObjectById<StoreOwner>(from)
+                    val toTarget = Game.getObjectById<StoreOwner>(to)
+                    if (fromTarget == null || toTarget == null) {
+                        finishTask()
+                        return
+                    } else {
+                        if (!creep.spawning) {
+                            val timeNeeds: Int =
+                                creep.pos.findPathTo(fromTarget).size + fromTarget.pos.findPathTo(toTarget).size + 10
+                            if (creep.ticksToLive < timeNeeds) creep.suicide()
+                            else {
+                                creep.memory.state = CreepState.COLLECT
+                            }
+                        } else {
+                            return
+                        }
+                    }
+                }
                 CreepState.COLLECT -> {
                     val target = Game.getObjectById<StoreOwner>(from)
                     if (target == null) {
@@ -30,7 +49,7 @@ class Transfer(name: String) : CreepExtension(name) {
                         return
                     }
                     val amunt =
-                        minOf(amount, target.store[type] ?: 0, creep.store.getFreeCapacity())
+                        minOf(amount, target.store[type as ResourceConstant] ?: 0, creep.store.getFreeCapacity())
                     val code = creep.withdraw(target, type, amunt)
                     if (code == ERR_NOT_IN_RANGE) creep.moveTo(target)
                     else if (code == OK) {
@@ -42,20 +61,20 @@ class Transfer(name: String) : CreepExtension(name) {
                     val target = Game.getObjectById<StoreOwner>(to)
                     if (target == null) {
                         finishTask()
+                        creep.memory.state = CreepState.PREPARE
                         return
                     }
                     val amunt =
-                        minOf(amount, target.store.getFreeCapacity(), creep.store[type] ?: 0)
+                        minOf(amount, target.store.getFreeCapacity(), creep.store[type as ResourceConstant] ?: 0)
                     val code = creep.transfer(target, type, amunt)
                     if (code == ERR_NOT_IN_RANGE) creep.moveTo(target)
-                    else if (code == OK) {
-                        creep.memory.state = CreepState.COLLECT
+                    else if (code == OK || amunt == 0) {
                         target.store[type] = target.store[type]!! + amunt
-                        creep.memory.transferTask.amount -= amunt
                         if (creep.memory.transferTask.amount <= 0) {
                             finishTask()
-                        } else {
                         }
+                        creep.memory.transferTask.amount -= amunt
+                        creep.memory.state = CreepState.PREPARE
                     } else console.log("${creep.name} try to transfer ${target.id} err code : ${code}")
                 }
                 else -> Unit
@@ -69,7 +88,8 @@ class Transfer(name: String) : CreepExtension(name) {
         CreepState.IDLE -> CreepState.COLLECT
         CreepState.COLLECT -> CreepState.COLLECT
         CreepState.WORK -> CreepState.WORK
-        else -> CreepState.COLLECT
+        CreepState.PREPARE -> CreepState.PREPARE
+        else -> CreepState.PREPARE
     }
 
     companion object {

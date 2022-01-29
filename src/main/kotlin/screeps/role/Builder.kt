@@ -2,12 +2,10 @@ package screeps.role
 
 import screeps.api.*
 import screeps.api.structures.StructureSpawn
+import screeps.buildingTask
 import screeps.creep.collectEnergy
-import screeps.room.BodyParts
-import screeps.room.chooseBody
-import screeps.room.getConstructionSite
+import screeps.room.*
 import screeps.state
-import screeps.workTarget
 
 class Builder(name: String) : CreepExtension(name) {
     override val role: Role = Role.BUILDER
@@ -17,12 +15,18 @@ class Builder(name: String) : CreepExtension(name) {
                 creep.collectEnergy()
             }
             CreepState.WORK -> {
-                val target =
-                    Game.getObjectById<ConstructionSite>(creep.memory.workTarget)
-                        ?: creep.room.getConstructionSite()
-                creep.memory.workTarget = target?.id ?: ""
-                if (target != null) {
-                    if (creep.build(target) == ERR_NOT_IN_RANGE) creep.moveTo(target)
+                with(creep.memory.buildingTask) {
+                    if (creep.memory.buildingTask.type == BuildingType.EMPTY) {
+                        creep.memory.buildingTask = creep.room.extension.buildingTaskQueue.getTask()
+                    }
+                    if (type == BuildingType.EMPTY) return
+                    val tar = Game.getObjectById<ConstructionSite>(target)
+                    if (tar == null) {
+                        creep.memory.buildingTask = emptyBuildingTask
+                        return
+                    }
+                    if (creep.build(tar) == ERR_NOT_IN_RANGE) creep.moveTo(tar)
+
                 }
             }
             CreepState.IDLE -> Unit
