@@ -2,9 +2,6 @@ package screeps
 
 import screeps.api.*
 import screeps.creep.run
-import screeps.role.CreepExtensions
-import screeps.role.Role
-import screeps.room.TransferTask
 import screeps.room.extension
 import screeps.room.run
 import screeps.utils.memory.memory
