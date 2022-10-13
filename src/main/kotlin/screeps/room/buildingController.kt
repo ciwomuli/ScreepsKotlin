@@ -17,12 +17,12 @@ enum class BuildingType {
 }
 
 @Serializable
-data class BuildingTask(val priority: Int, val target: String, val type: BuildingType, val repairTarget: Int)
+data class BuildingTask(val priority: Int, val target: String, val type: String, val repairTarget: Int)
 
 @Serializable
 data class BuildingTaskList(val queue: List<BuildingTask>)
 
-val emptyBuildingTask = BuildingTask(-1, "", BuildingType.EMPTY, 0)
+val emptyBuildingTask = BuildingTask(-1, "", BuildingType.EMPTY.name, 0)
 var RoomMemory.buildingTaskQueue: BuildingTaskList?
     get() {
         val internal = this.asDynamic().buildingTaskQueue
@@ -79,7 +79,7 @@ fun Room.building() {
                     when (constructionSite.structureType) {
                         STRUCTURE_EXTENSION -> 5
                         else -> 4
-                    }, constructionSite.id, BuildingType.BUILD, 0
+                    }, constructionSite.id, BuildingType.BUILD.name, 0
                 )
             )
             Memory.structures[constructionSite.id]!!.inBuildingQueue = true

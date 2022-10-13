@@ -2,6 +2,8 @@ package screeps
 
 import screeps.api.*
 import screeps.creep.run
+import screeps.role.CreepExtensions
+import screeps.role.Role
 import screeps.room.extension
 import screeps.room.run
 import screeps.utils.memory.memory
@@ -10,18 +12,9 @@ var Memory.evalOnce by memory { false }
 
 fun gameLoop() {
     if (!Memory.evalOnce) {
-        // CreepExtensions.addCreep("upgrader_W4N9_3", Role.UPGRADER, true)
-        //CreepExtensions.deleteCreep("center_W4N9_2")
-       /* Game.rooms["W4N9"]!!.extension.transferTaskQueue.addTask(
-            TransferTask(
-                1,
-                "test",
-                "test",
-                "test",
-                RESOURCE_ALLOY as String,
-                0
-            )
-        )*/
+        CreepExtensions.deleteCreep("upgrader_W4N9_3")
+        CreepExtensions.deleteCreep("upgrader_W4N9_2")
+        CreepExtensions.addCreep("builder_W4N9_1", Role.BUILDER, true)
         Memory.evalOnce = true
     }
     if (Game.cpu.bucket == 10000) {

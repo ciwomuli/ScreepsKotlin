@@ -16,10 +16,10 @@ class Builder(name: String) : CreepExtension(name) {
             }
             CreepState.WORK -> {
                 with(creep.memory.buildingTask) {
-                    if (creep.memory.buildingTask.type == BuildingType.EMPTY) {
+                    if (creep.memory.buildingTask.type == BuildingType.EMPTY.name) {
                         creep.memory.buildingTask = creep.room.extension.buildingTaskQueue.getTask()
                     }
-                    if (type == BuildingType.EMPTY) return
+                    if (type == BuildingType.EMPTY.name) return
                     val tar = Game.getObjectById<ConstructionSite>(target)
                     if (tar == null) {
                         creep.memory.buildingTask = emptyBuildingTask
