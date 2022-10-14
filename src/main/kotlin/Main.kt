@@ -1,4 +1,12 @@
-import screeps.gameLoop
+import starter.gameLoop
+private object Traveler {
+    init {
+        js("var Traveler = require('Traveler');")
+        println("global reset!")
+        println("============================================================================================")
+        println("imported traveler")
+    }
+}
 /**
  * Entry point
  * is called by screeps
@@ -7,5 +15,6 @@ import screeps.gameLoop
  */
 @Suppress("unused")
 fun loop() {
+    Traveler
     gameLoop()
 }
