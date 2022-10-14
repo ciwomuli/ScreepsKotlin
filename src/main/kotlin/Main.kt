@@ -1,4 +1,3 @@
-import starter.gameLoop
 private object Traveler {
     init {
         js("var Traveler = require('Traveler');")

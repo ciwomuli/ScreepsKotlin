@@ -3,7 +3,6 @@ import java.security.SecureRandom
 import java.util.*
 import javax.net.ssl.*
 
-
 plugins {
     kotlin("js") version "1.7.0"
     kotlin("plugin.serialization") version "1.7.10"
@@ -90,6 +89,7 @@ tasks.register("deploy") {
         val modules = mutableMapOf<String, String>()
         modules["main"] = main.readText()
         modules.putAll(otherModules.associate { it.nameWithoutExtension to it.readText() })
+        modules["Traveler"] = File("traveler/Traveler.js").readText()
         val uploadContent = mapOf("branch" to branch, "modules" to modules)
         val uploadContentJson = groovy.json.JsonOutput.toJson(uploadContent)
 

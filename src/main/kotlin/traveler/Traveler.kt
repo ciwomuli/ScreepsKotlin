@@ -9,6 +9,7 @@
 
 package traveler
 
+import screeps.api.NavigationTarget
 import screeps.api.PathFinder
 import screeps.api.RoomPosition
 import screeps.api.ScreepsReturnCode
@@ -165,7 +166,7 @@ external interface TravelState {
 }
 
 external interface TravelerCreep {
-    fun travelTo(destination: HasPos, ops: TravelToOptions? = definedExternally /* null */): ScreepsReturnCode
+    fun travelTo(destination: NavigationTarget, ops: TravelToOptions? = definedExternally /* null */): ScreepsReturnCode
     fun travelTo(destination: RoomPosition, ops: TravelToOptions? = definedExternally /* null */): ScreepsReturnCode
 }
 
