@@ -1,8 +1,7 @@
-import role.CreepRole
+import Mission.MissionType
 import screeps.api.CreepMemory
 import screeps.utils.memory.memory
 
-var CreepMemory.role by memory(CreepRole.UNKNOWN)
 var CreepMemory.state by memory(CreepState.IDLE)
 var CreepMemory.fillType by memory(FillType.SOURCE)
 var CreepMemory.fillId: String? by memory()

@@ -1,0 +1,4 @@
+package Spawn
+
+class SpawnQueue {
+}
